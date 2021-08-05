@@ -26,6 +26,49 @@ class _RandomWordsState extends State<RandomWords> {
         alreadySaved ? Icons.favorite : Icons.favorite_border,
         color: alreadySaved ? Colors.red : null,
       ),
+      onTap: () {
+        setState(() {
+          if (alreadySaved) {
+            _saved.remove(pair);
+            _saved.forEach((index) => print("$index"));
+            print("\n");
+          } else {
+            _saved.add(pair);
+            _saved.forEach((index) => print("$index"));
+            print("\n");
+          }
+        });
+      },
+    );
+  }
+
+  void _pushSaved() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        // NEW lines from here...
+        builder: (BuildContext context) {
+          final tiles = _saved.map(
+            (WordPair pair) {
+              return ListTile(
+                title: Text(
+                  pair.asPascalCase,
+                  style: _biggerFont,
+                ),
+              );
+            },
+          );
+          final divided = tiles.isNotEmpty
+              ? ListTile.divideTiles(context: context, tiles: tiles).toList()
+              : <Widget>[];
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Saved Suggestions'),
+            ),
+            body: ListView(children: divided),
+          );
+        }, // ...to here.
+      ),
     );
   }
 
@@ -54,8 +97,8 @@ class _RandomWordsState extends State<RandomWords> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('start up name generator'),
-      ),
+          title: Text('start up name generator'),
+          actions: [IconButton(onPressed: _pushSaved, icon: Icon(Icons.list))]),
       body: _buildSuggestions(),
     );
   }
